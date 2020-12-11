@@ -11,37 +11,11 @@ class Customer(models.Model):
         return self.name
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=200)
-    image = models.ImageField(null=True, blank=True)
-    description = models.TextField(blank=True)
-
-    def products(self):
-        return Product.objects.filter(category=self)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Category'
-        verbose_name_plural = 'Categories'
-
-
-    @property
-    def imageURL(self):
-        try:
-            url = self.image.url
-        except:
-            url = ''
-        return url
-
-
 class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
     price = models.FloatField()
     digital = models.BooleanField(default=False, null=True, blank=False)
     image = models.ImageField(null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE,  null=True, related_name='product')
 
     def __str__(self):
         return self.name

@@ -3,7 +3,6 @@ from django.http import JsonResponse
 import json
 import datetime
 
-from django.template import context
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
@@ -22,9 +21,8 @@ def store(request):
         order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping':False}
         cartItems = order['get_cart_items']
 
-    # products = Product.objects.all()
-    categories = Category.objects.all()
-    context = {'categories': categories, 'cartItems': cartItems}
+    products = Product.objects.all()
+    context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/store.html', context)
 
 
@@ -89,7 +87,6 @@ def updateItem(request):
 def processOrder(request):
     transaction_id = datetime.datetime.now().timestamp()
     data = json.loads(request.body)
-    print(data)
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
@@ -116,13 +113,3 @@ def processOrder(request):
 
     #print('Data:', request.body)
     return JsonResponse('Payment completed', safe=False)
-
-
-def search(request):
-    results = None
-    search_query = request.GET.get('search_box', None)
-    if search_query != None:
-        results = Product.objects.filter(name__contains=search_query)
-    if results:
-        return render(request, "store/search-results.html", {"results": results})
-
